@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Custom styles for toast messages */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1rem;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .toast-warning {
+            background-color: #f39c12;
+        }
+
+        .toast-info {
+            background-color: #3498db;
+        }
+
+        .toast-success {
+            background-color: #2ecc71;
+        }
+
+        .toast.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-inter">
+    <div class="container mx-auto p-8 bg-white rounded-lg shadow-md mt-10">
+        <h1 class="text-3xl font-semibold text-blue-600 text-center mb-6">
+            Resume Builder
+        </h1>
+
+        <form id="resumeForm" class="space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                    Personal Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2"
+                            >Name <span class="text-red-500">*</span></label
+                        >
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2"
+                            >Email <span class="text-red-500">*</span></label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-gray-700 text-sm font-bold mb-2"
+                            >Phone Number <span class="text-red-500">*</span></label
+                        >
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="linkedin" class="block text-gray-700 text-sm font-bold mb-2"
+                            >LinkedIn Profile ID <span class="text-red-500">*</span></label
+                        >
+                        <input
+                            type="text"
+                            id="linkedin"
+                            name="linkedin"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required
+                        />
+                    </div>
+                    <div class="col-span-full">
+                        <label for="summary" class="block text-gray-700 text-sm font-bold mb-2"
+                            >Summary <span class="text-red-500">*</span></label
+                        >
+                        <textarea
+                            id="summary"
+                            name="summary"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32 resize-y"
+                            required
+                        ></textarea>
+                    </div>
+                    <div>
+                        <label for="photo" class="block text-gray-700 text-sm font-bold mb-2"
+                            >Photo</label
+                        >
+                        <input
+                            type="file"
+                            id="photo"
+                            name="photo"
+                            accept="image/*"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Education</h2>
+                <div id="educationEntries">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 education-entry">
+                        <div>
+                            <label for="degree" class="block text-gray-700 text-sm font-bold mb-2"
+                                >Degree <span class="text-red-500">*</span></label
+                            >
+                            <input
+                                type="text"
+                                name="degree[]"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="branch" class="block text-gray-700 text-sm font-bold mb-2"
+                                >Branch <span class="text-red-500">*</span></label
+                            >
+                            <input
+                                type="text"
+                                name="branch[]"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="year" class="block text-gray-700 text-sm font-bold mb-2"
+                                >Year <span class="text-red-500">*</span></label
+                            >
+                            <input
+                                type="text"
+                                name="year[]"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    id="addEducation"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    Add Education
+                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Experience</h2>
+                <div id="experienceEntries">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 experience-entry">
+                        <div>
+                            <label for="jobRole" class="block text-gray-700 text-sm font-bold mb-2"
+                                >Job Role <span class="text-red-500">*</span></label
+                            >
+                            <input
+                                type="text"
+                                name="jobRole[]"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="company" class="block text-gray-700 text-sm font-bold mb-2"
+                                >Company <span class="text-red-500">*</span></label
+                            >
+                            <input
+                                type="text"
+                                name="company[]"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="duration" class="block text-gray-700 text-sm font-bold mb-2"
+                                >Duration <span class="text-red-500">*</span></label
+                            >
+                            <input
+                                type="text"
+                                name="duration[]"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    id="addExperience"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    Add Experience
+                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Skills</h2>
+                <div>
+                    <label for="skills" class="block text-gray-700 text-sm font-bold mb-2"
+                        >Skills (Comma-separated) <span class="text-red-500">*</span></label
+                    >
+                    <input
+                        type="text"
+                        id="skills"
+                        name="skills"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        required
+                    />
+                </div>
+            </div>
+
+            <button
+                type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline text-lg"
+            >
+                Generate Resume
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const educationEntries = document.getElementById("educationEntries");
+        const addEducationButton = document.getElementById("addEducation");
+        const experienceEntries = document.getElementById("experienceEntries");
+        const addExperienceButton = document.getElementById("addExperience");
+        const resumeForm = document.getElementById("resumeForm");
+
+        function createToast(message, type = "info") {
+            const toast = document.createElement("div");
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add("fade-out");
+                setTimeout(() => toast.remove(), 500);
+            }, 2000);
+        }
+
+        addEducationButton.addEventListener("click", () => {
+            const educationEntry = document.createElement("div");
+            educationEntry.className = "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 education-entry";
+            educationEntry.innerHTML = `
+                <div>
+                    <label for="degree" class="block text-gray-700 text-sm font-bold mb-2">Degree <span class="text-red-500">*</span></label>
+                    <input type="text" name="degree[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="branch" class="block text-gray-700 text-sm font-bold mb-2">Branch <span class="text-red-500">*</span></label>
+                    <input type="text" name="branch[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="year" class="block text-gray-700 text-sm font-bold mb-2">Year <span class="text-red-500">*</span></label>
+                    <input type="text" name="year[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+            `;
+            educationEntries.appendChild(educationEntry);
+        });
+
+        addExperienceButton.addEventListener("click", () => {
+            const experienceEntry = document.createElement("div");
+            experienceEntry.className = "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 experience-entry";
+            experienceEntry.innerHTML = `
+                <div>
+                    <label for="jobRole" class="block text-gray-700 text-sm font-bold mb-2">Job Role <span class="text-red-500">*</span></label>
+                    <input type="text" name="jobRole[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="company" class="block text-gray-700 text-sm font-bold mb-2">Company <span class="text-red-500">*</span></label>
+                    <input type="text" name="company[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="duration" class="block text-gray-700 text-sm font-bold mb-2">Duration <span class="text-red-500">*</span></label>
+                    <input type="text" name="duration[]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+            `;
+            experienceEntries.appendChild(experienceEntry);
+        });
+
+        resumeForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const linkedin = document.getElementById("linkedin").value;
+            const summary = document.getElementById("summary").value;
+            const photoInput = document.getElementById("photo"); // Changed to get input element
+            const skills = document.getElementById("skills").value;
+
+            const degrees = document.getElementsByName("degree[]");
+            const branches = document.getElementsByName("branch[]");
+            const years = document.getElementsByName("year[]");
+
+            const jobRoles = document.getElementsByName("jobRole[]");
+            const companies = document.getElementsByName("company[]");
+            const durations = document.getElementsByName("duration[]");
+
+            if (!name || !email || !phone || !linkedin || !summary || !skills) {
+                createToast("Please fill in all required fields.", "warning");
+                return;
+            }
+
+            if (degrees.length === 0 || jobRoles.length === 0) {
+                createToast("Please add at least one education and experience entry.", "warning");
+                return;
+            }
+
+            // Basic email validation
+            const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+            if (!emailRegex.test(email)) {
+                createToast("Invalid email format.", "warning");
+                return;
+            }
+
+            // Basic phone number validation (you can customize this regex)
+            const phoneRegex = /^\d{10}$/; // Example: 10-digit US phone number
+            if (!phoneRegex.test(phone)) {
+                createToast("Invalid phone number format.", "warning");
+                return;
+            }
+
+            const educationData = [];
+            for (let i = 0; i < degrees.length; i++) {
+                if (!degrees[i].value || !branches[i].value || !years[i].value) {
+                    createToast("Please fill in all education fields.", "warning");
+                    return;
+                }
+                educationData.push({
+                    degree: degrees[i].value,
+                    branch: branches[i].value,
+                    year: years[i].value,
+                });
+            }
+
+            const experienceData = [];
+            for (let i = 0; i < jobRoles.length; i++) {
+                if(!jobRoles[i].value || !companies[i].value || !durations[i].value){
+                    createToast("Please fill in all experience fields.", "warning");
+                    return;
+                }
+                experienceData.push({
+                    jobRole: jobRoles[i].value,
+                    company: companies[i].value,
+                    duration: durations[i].value,
+                });
+            }
+
+            // Handle image conversion to base64
+            const reader = new FileReader();
+            reader.onload = function() {
+                const base64data = reader.result;
+                generateResume(name, email, phone, linkedin, summary, educationData, experienceData, skills, base64data); // Pass base64 data
+            };
+
+            if (photoInput.files && photoInput.files[0]) {
+                reader.readAsDataURL(photoInput.files[0]); // Start reading the file
+            } else {
+                // If no photo is selected, pass an empty string
+                generateResume(name, email, phone, linkedin, summary, educationData, experienceData, skills, "");
+            }
+        });
+
+        function generateResume(name, email, phone, linkedin, summary, educationData, experienceData, skills, photoData) { // Changed parameter name to photoData
+            const pdfContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                    <head>
+                        <meta charset="UTF-8" />
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                        <title>Resume</title>
+                        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+                        <style>
+                            body {
+                                font-family: 'Inter', sans-serif;
+                                margin: 0;
+                                padding: 0;
+                            }
+                            .container {
+                                max-width: 800px;
+                                margin: 20px auto;
+                                padding: 20px;
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            }
+                            .header {
+                                text-align: center;
+                                margin-bottom: 20px;
+                            }
+                            .header h1 {
+                                font-size: 2.5rem;
+                                color: #2c3e50;
+                                margin-bottom: 5px;
+                            }
+                            .header p {
+                                font-size: 1.1rem;
+                                color: #7f8c8d;
+                                margin-bottom: 10px;
+                            }
+                            .section {
+                                margin-bottom: 20px;
+                            }
+                            .section h2 {
+                                font-size: 1.5rem;
+                                color: #34495e;
+                                margin-bottom: 10px;
+                                border-bottom: 2px solid #3498db;
+                                padding-bottom: 5px;
+                            }
+                            .personal-info {
+                                display: flex;
+                                align-items: center;
+                                margin-bottom: 15px;
+                            }
+                            .personal-info img {
+                                width: 100px;
+                                height: 100px;
+                                border-radius: 50%;
+                                margin-right: 20px;
+                                border: 2px solid #3498db;
+                            }
+                            .personal-info div {
+                                flex: 1;
+                            }
+                            .personal-info p {
+                                font-size: 1rem;
+                                color: #2c3e50;
+                                margin-bottom: 5px;
+                            }
+                            .education-entry, .experience-entry {
+                                margin-bottom: 15px;
+                                padding-left: 10px;
+                                border-left: 3px solid #3498db;
+                            }
+                            .education-entry p, .experience-entry p{
+                                font-size: 1rem;
+                                color: #2c3e50;
+                                margin-bottom: 5px;
+                            }
+
+                            .skills-section {
+                                margin-top: 10px;
+                            }
+                            .skills-section p{
+                                font-size: 1rem;
+                                color: #2c3e50;
+                            }
+                            .footer {
+                                text-align: center;
+                                margin-top: 20px;
+                                font-size: 0.9rem;
+                                color: #7f8c8d;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h1>${name}</h1>
+                                <p>${summary}</p>
+                            </div>
+                            <div class="personal-info">
+                                ${photoData ? `<img src="${photoData}" alt="Profile Photo" />` : ''}   // Use photoData here
+                                <div>
+                                    <p><strong>Email:</strong> ${email}</p>
+                                    <p><strong>Phone:</strong> ${phone}</p>
+                                    <p><strong>LinkedIn:</strong> ${linkedin}</p>
+                                </div>
+                            </div>
+                            <div class="section">
+                                <h2>Education</h2>
+                                ${educationData.map(
+                                    (edu) => `
+                                        <div class="education-entry">
+                                            <p><strong>Degree:</strong> ${edu.degree}</p>
+                                            <p><strong>Branch:</strong> ${edu.branch}</p>
+                                            <p><strong>Year:</strong> ${edu.year}</p>
+                                        </div>
+                                    `
+                                ).join('')}
+                            </div>
+                            <div class="section">
+                                <h2>Experience</h2>
+                                ${experienceData.map(
+                                    (exp) => `
+                                        <div class="experience-entry">
+                                            <p><strong>Job Role:</strong> ${exp.jobRole}</p>
+                                            <p><strong>Company:</strong> ${exp.company}</p>
+                                            <p><strong>Duration:</strong> ${exp.duration}</p>
+                                        </div>
+                                    `
+                                ).join('')}
+                            </div>
+                            <div class="section skills-section">
+                                <h2>Skills</h2>
+                                <p>${skills}</p>
+                            </div>
+                            <div class="footer">
+                                <p>Generated by Resume Builder</p>
+                            </div>
+                        </div>
+                    </body>
+                </html>
+            `;
+
+            const opt = {
+                margin: 0.5,
+                filename: `${name.replace(/\s+/g, '-')}-resume.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            };
+
+            html2pdf().from(pdfContent).set(opt).save().then(() => {
+                createToast("Resume generated successfully!", "success");
+            }).catch(error => {
+                 console.error("Error generating PDF:", error);
+                createToast("Failed to generate resume.", "warning");
+            });
+        }
+    </script>
+</body>
+</html>

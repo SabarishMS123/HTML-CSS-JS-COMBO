@@ -1,0 +1,114 @@
+/* Custom styles for toast messages */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  }
+  
+  .toast-warning {
+    background-color: #f39c12;
+  }
+  
+  .toast-info {
+    background-color: #3498db;
+  }
+  
+  .toast-success {
+    background-color: #2ecc71;
+  }
+  
+  .toast.fade-out {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  .header p {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+  }
+  .section {
+    margin-bottom: 20px;
+  }
+  .section h2 {
+    font-size: 1.5rem;
+    color: #34495e;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+  }
+  .personal-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .personal-info img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+    border: 2px solid #3498db;
+  }
+  .personal-info div {
+    flex: 1;
+  }
+  .personal-info p {
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  .education-entry, .experience-entry {
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 3px solid #3498db;
+  }
+  .education-entry p, .experience-entry p{
+      font-size: 1rem;
+      color: #2c3e50;
+      margin-bottom: 5px;
+  }
+  
+  .skills-section {
+    margin-top: 10px;
+  }
+  .skills-section p{
+      font-size: 1rem;
+      color: #2c3e50;
+  }
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }

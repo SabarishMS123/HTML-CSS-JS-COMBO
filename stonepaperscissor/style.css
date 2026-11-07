@@ -1,0 +1,36 @@
+body {
+    text-align: center;
+    font-family:'Times New Roman', Times, serif;
+    background-color: black;
+    color: white;
+}
+
+.game {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.user-choice img, .computer-choice img {
+    width: 100px;
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.3s;
+}
+
+.user-choice img:hover {
+    transform: scale(1.2);
+}
+
+#result-box {
+    margin-top: 20px;
+    background-color: black;
+    padding: 10px;
+}
+
+#result {
+    font-size: 24px;
+    font-weight: bold;
+    color: red;
+}
